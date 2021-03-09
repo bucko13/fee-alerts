@@ -1,3 +1,5 @@
+// can probably delete
+
 const path = require('path')
 const envPath = path.resolve(process.cwd(), '.env.local')
 
@@ -45,6 +47,7 @@ async function migrate() {
     `)
     console.log('migration ran successfully')
   } catch (e) {
+    console.log(e.message)
     console.error('could not run migration, double check your credentials.')
     process.exit(1)
   }

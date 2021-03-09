@@ -8,6 +8,7 @@
     "migrate": "node scripts/migrate-db.js"
   },
   "dependencies": {
+    "@prisma/client": "^2.18.0",
     "bad-words": "^3.0.4",
     "clsx": "^1.1.1",
     "dotenv": "^8.2.0",
@@ -23,6 +24,7 @@
     "@types/react": "^16.9.55",
     "postcss-flexbugs-fixes": "4.2.1",
     "postcss-preset-env": "^6.7.0",
+    "prisma": "2.18.0",
     "tailwindcss": "^1.7.4",
     "typescript": "^4.0.5"
   },
