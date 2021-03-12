@@ -1,8 +1,8 @@
-import Link from 'next/link'
-import Container from '@/components/container'
-import ButtonLink from '@/components/button-link'
+import Link from "next/link"
+import Container from "@/components/container"
+import ButtonLink from "@/components/button-link"
 
-export default function Nav({ title = 'Entries' }) {
+export default function Nav({ title = "Entries" }) {
   return (
     <Container className="py-4">
       <nav>

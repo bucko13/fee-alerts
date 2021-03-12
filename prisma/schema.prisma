@@ -7,29 +7,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// model entries {
-//   id         Int      @id @default(autoincrement())
-//   title      String   @db.Text
-//   content    String   @db.Text
-//   created_at DateTime @default(now()) @db.Timestamp(0)
-//   updated_at DateTime @default(now()) @db.Timestamp(0)
-// }
-
 model User {
-  id            Int         @id @default(autoincrement())
+  id            String      @id @default(uuid())
   createdAt     DateTime    @default(now()) @map(name: "created_at")
   updatedAt     DateTime    @updatedAt @map(name: "updated_at")
   email         String      @unique
-  frequency     Frequency
-  type          AlertType[]
+  types         AlertTypes[]
 }
 
-enum Frequency {
-  once
-  twice
-}
-
-enum AlertType {
+enum AlertTypes {
   lt10sats
   gt10sats
   lt50sats

@@ -1,27 +1,31 @@
-import cn from 'clsx'
+import cn from "clsx"
 
 function Button({
   onClick = console.log,
-  className = '',
+  className = "",
   children = null,
   type = null,
   disabled = false,
 }) {
+  console.log("disabled?", disabled)
   return (
     <button
       type={type}
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        'bg-black',
-        'text-white',
-        'p-2',
-        'rounded',
-        'uppercase',
-        'text-sm',
-        'font-bold',
+        "min-w-full",
+        "bg-black",
+        "text-white",
+        "p-2",
+        "rounded",
+        "uppercase",
+        "text-sm",
+        "font-bold",
         {
           [className]: Boolean(className),
+          "cursor-default": Boolean(disabled),
+          "bg-opacity-25": Boolean(disabled),
         }
       )}
     >

@@ -1,20 +1,20 @@
-import { useState, useEffect } from 'react'
-import Router, { useRouter } from 'next/router'
+import { useState, useEffect } from "react"
+import Router, { useRouter } from "next/router"
 
-import Button from '../button'
+import Button from "../button"
 
-export default function EntryForm() {
-  const [_title, setTitle] = useState('')
-  const [_content, setContent] = useState('')
+export default function SubscribeForm() {
+  const [_title, setTitle] = useState("")
+  const [_content, setContent] = useState("")
   const [submitting, setSubmitting] = useState(false)
   const router = useRouter()
   const { id, title, content } = router.query
 
   useEffect(() => {
-    if (typeof title === 'string') {
+    if (typeof title === "string") {
       setTitle(title)
     }
-    if (typeof content === 'string') {
+    if (typeof content === "string") {
       setContent(content)
     }
   }, [title, content])
@@ -23,10 +23,10 @@ export default function EntryForm() {
     e.preventDefault()
     setSubmitting(true)
     try {
-      const res = await fetch('/api/edit-entry', {
-        method: 'PATCH',
+      const res = await fetch("/api/edit-entry", {
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           id,
@@ -37,7 +37,7 @@ export default function EntryForm() {
       const json = await res.json()
       setSubmitting(false)
       if (!res.ok) throw Error(json.message)
-      Router.push('/')
+      Router.push("/")
     } catch (e) {
       throw Error(e.message)
     }
@@ -71,7 +71,7 @@ export default function EntryForm() {
         />
       </div>
       <Button disabled={submitting} type="submit">
-        {submitting ? 'Saving ...' : 'Save'}
+        {submitting ? "Saving ..." : "Save"}
       </Button>
     </form>
   )

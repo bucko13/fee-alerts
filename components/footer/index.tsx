@@ -1,4 +1,4 @@
-import PoweredByVercel from '../powered-by-vercel'
+import PoweredByVercel from "../powered-by-vercel"
 
 function Footer() {
   return (
