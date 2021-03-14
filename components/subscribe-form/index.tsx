@@ -1,3 +1,4 @@
+import React from "react"
 import { FormEvent, useState } from "react"
 import axios from "axios"
 import validator from "validator"
@@ -6,20 +7,20 @@ import Button from "@/components/button"
 
 const checklist = [
   {
-    value: "lt10sats",
-    label: "Less than 10 sats/byte",
+    value: "ltlow",
+    label: `Less than ${process.env.LOW_FEE || 10} sats/byte`,
   },
   {
-    value: "gt10sats",
-    label: "Greater than 10 sats/byte",
+    value: "gtlow",
+    label: `Greater than ${process.env.LOW_FEE || 10} sats/byte`,
   },
   {
-    value: "lt50sats",
-    label: "Less than 50 sats/byte",
+    value: "lthigh",
+    label: `Less than ${process.env.HIGH_FEE || 50} sats/byte`,
   },
   {
-    value: "gt50sats",
-    label: "Greater than 50 sats/byte",
+    value: "gthigh",
+    label: `Greater than ${process.env.HIGH_FEE || 50} sats/byte`,
   },
 ]
 
