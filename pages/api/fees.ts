@@ -2,6 +2,7 @@ import { NextApiHandler } from "next"
 import axios from "axios"
 import prisma from "@/lib/prisma"
 import AWS from "aws-sdk"
+import path from "path"
 
 const SESConfig = {
   accessKeyId: process.env.AWS_SES_ACCESS_KEY_ID,
@@ -45,6 +46,20 @@ const getEmailSubject = (type: AlertType): string => {
   }
 }
 
+const getProfileUrl = (id: string): string => {
+  const VERCEL_URL = process.env.VERCEL_URL
+  const API_ORIGIN = process.env.API_ORIGIN
+
+  let base
+  if (API_ORIGIN && API_ORIGIN.includes("http")) {
+    base = API_ORIGIN
+  } else {
+    base = VERCEL_URL ? `https://${VERCEL_URL}` : `https://txfees.watch`
+  }
+
+  return new URL(`profile/${id}`, base).href
+}
+
 const getEmailBody = (
   type: AlertType,
   hourFee: number,
@@ -83,9 +98,9 @@ const getEmailBody = (
 
   body += `<br /><br />`
 
-  body += `To update your preferences or unsubscribe visit this link: <br />${
-    process.env.VERCEL_URL || process.env.API_ORIGIN
-  }/profile/${id}`
+  const profileUrl = getProfileUrl(id)
+
+  body += `To update your preferences or unsubscribe visit this link: <br />${profileUrl}`
 
   body += `<br /><br />`
   body += `Data for this alert provided by https://mempool.space`
@@ -114,7 +129,7 @@ const sendEmail = async (
   const subject = getEmailSubject(type)
 
   // TODO: Parallelize these calls?
-  data.forEach(({ email, id }) => {
+  data.forEach(async ({ email, id }) => {
     try {
       const params = {
         Source: "fee-alert@protonmail.com",
@@ -135,7 +150,7 @@ const sendEmail = async (
         },
       }
       const client = new AWS.SES(SESConfig)
-      client.sendEmail(params).promise()
+      await client.sendEmail(params).promise()
     } catch (e) {
       console.error(`Problem sending email for user ${id}: ${e.message}`)
     }
