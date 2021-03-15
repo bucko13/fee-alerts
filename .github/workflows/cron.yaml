@@ -1,7 +1,9 @@
 name: 12-hour-cron
 on:
   schedule:
-    - cron: "* */12 * * *"
+    # - cron: "* */12 * * *"
+    # temp for testing, hit the endpoint every 5 minutes
+    - cron: "*/5 * * * *"
 jobs:
   cron:
     runs-on: ubuntu-latest
@@ -9,5 +11,5 @@ jobs:
       - name: Call our API route
         run: |
           curl --request POST \
-          --url 'https://fee-alerts.bucko.vercel.com/api/fees' \
+          --url '${{ secrets.API_ORIGIN }}/api/fees' \
           --header 'Authorization: Bearer ${{ secrets.FEES_API_KEY}}'
