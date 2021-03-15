@@ -4,35 +4,12 @@ import axios from "axios"
 import validator from "validator"
 
 import Button from "@/components/button"
-
-const checklist = [
-  {
-    value: "ltlow",
-    label: `Less than ${process.env.LOW_FEE || 10} sats/byte`,
-  },
-  {
-    value: "gtlow",
-    label: `Greater than ${process.env.LOW_FEE || 10} sats/byte`,
-  },
-  {
-    value: "lthigh",
-    label: `Less than ${process.env.HIGH_FEE || 50} sats/byte`,
-  },
-  {
-    value: "gthigh",
-    label: `Greater than ${process.env.HIGH_FEE || 50} sats/byte`,
-  },
-]
+import AlertTypeChecklist, { typesChecklist } from "./AlertTypeChecklist"
 
 const SubscribeForm: React.FC = () => {
   const [email, setEmail] = useState("")
-  const [types, setTypes] = useState(
-    checklist.reduce((acc, curr) => {
-      acc[curr.value] = false
-      return acc
-    }, {})
-  )
-  const [submitted, setSubmitted] = useState(false)
+  const [types, setTypes] = useState(typesChecklist)
+  const [userId, setUserId] = useState("")
   const [submitting, setSubmitting] = useState(false)
   const [errors, setErrors] = useState([])
 
@@ -41,7 +18,6 @@ const SubscribeForm: React.FC = () => {
       ...types,
       [val]: !types[val],
     })
-    console.log("types:", types)
   }
 
   function addError(message: string) {
@@ -74,12 +50,13 @@ const SubscribeForm: React.FC = () => {
     setSubmitting(true)
 
     try {
-      const res = await axios.post("/api/user", {
+      const {
+        data: { id },
+      } = await axios.post("/api/user", {
         email,
         types: activatedTypes,
       })
-      console.log("res:", res)
-      setSubmitted(true)
+      setUserId(id)
       setSubmitting(false)
     } catch (e) {
       setSubmitting(false)
@@ -87,58 +64,42 @@ const SubscribeForm: React.FC = () => {
     }
   }
 
-  const renderAccountTypeChecklist = () =>
-    checklist.map(({ value, label }) => (
-      <div key={value} className="flex items-center my-1">
-        <input
-          type="checkbox"
-          name="alert_type"
-          value={value}
-          id={value}
-          className="mr-3 cursor-pointer"
-          checked={types[value]}
-          onChange={(e) => handleUpdateTypes(e.target.value)}
-        />
-        <label htmlFor={value} className="cursor-pointer">
-          {label}
-        </label>
-      </div>
-    ))
-
-  if (submitted) return <h2>Your submission was successful!</h2>
-
   return (
     <div className="p-10 shadow-xl rounded-md">
-      <form onSubmit={submitHandler} onChange={() => setErrors([])}>
-        <div className="mb-10">
-          <label htmlFor="email">
-            <h3 className="font-bold">E-mail</h3>
-          </label>
-          <input
-            id="email"
-            className="shadow border rounded w-full p-2"
-            type="email"
-            name="email"
-            value={email}
-            required
-            onChange={(e) => setEmail(e.target.value)}
+      {userId ? (
+        <h3>
+          Your submission was successful! Update preferences here{" "}
+          <a href={`/profile/${userId}`}>here</a>.
+        </h3>
+      ) : (
+        <form onSubmit={submitHandler} onChange={() => setErrors([])}>
+          <div className="mb-10">
+            <label htmlFor="email">
+              <h3 className="font-bold">E-mail</h3>
+            </label>
+            <input
+              id="email"
+              className="shadow border rounded w-full p-2"
+              type="email"
+              name="email"
+              value={email}
+              required
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <AlertTypeChecklist
+            handleUpdateTypes={handleUpdateTypes}
+            types={types}
           />
-        </div>
-        <div className="mb-10">
-          <label htmlFor="types">
-            <h3 className="font-bold">Alert Types</h3>
-          </label>
-          <fieldset id="types">{renderAccountTypeChecklist()}</fieldset>
-        </div>
-        <Button
-          disabled={submitting || !!errors.length}
-          type="submit"
-          onClick={submitHandler}
-          // className="hover:cursor-pointer"
-        >
-          {submitting ? "Submitting..." : "Submit"}
-        </Button>
-      </form>
+          <Button
+            type="submit"
+            onClick={submitHandler}
+            disabled={submitting || !!errors.length || !email.length}
+          >
+            {submitting ? "Submitting..." : "Submit"}
+          </Button>
+        </form>
+      )}
       {errors.length ? (
         <div className="border border-red-700 bg-red-300 p-2 my-1">
           {errors.map((error, index) => (

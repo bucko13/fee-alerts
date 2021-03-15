@@ -27,7 +27,7 @@ export const getFeeAlertType = (
   return null
 }
 
-const getTypeSubject = (type: AlertType): string => {
+const getEmailSubject = (type: AlertType): string => {
   const LOW_FEE = process.env.LOW_FEE
   const HIGH_FEE = process.env.HIGH_FEE
 
@@ -48,81 +48,93 @@ const getTypeSubject = (type: AlertType): string => {
 const getEmailBody = (
   type: AlertType,
   hourFee: number,
-  minimumFee: number
+  minimumFee: number,
+  id: string
 ): string => {
   const LOW_FEE = process.env.LOW_FEE
   const HIGH_FEE = process.env.HIGH_FEE
 
-  let body = "This is a bitoin fee alert. \n"
+  let body = "<h3>This is a bitoin fee alert.</h3><br />"
 
   body += `Fees on the bitcoin network are currently `
 
   switch (type) {
     case "ltlow":
-      body += `less than ${LOW_FEE} sats/byte. Now might be a good time to send non-urgent transactions or consolidate UTXOs.`
+      body += `<strong>less than ${LOW_FEE} sats/byte.</strong> Now might be a good time to send non-urgent transactions or consolidate UTXOs.`
       break
     case "gtlow":
-      body += `greater than ${LOW_FEE} sats/byte, but still below ${HIGH_FEE} sats/byte. If any transactions are not urgent, you might consider waiting until they drop back down below ${LOW_FEE} sats/byte.`
+      body += `<strong>greater than ${LOW_FEE} sats/byte</strong>, but still below ${HIGH_FEE} sats/byte. If any transactions are not urgent, you might consider waiting until they drop back down below ${LOW_FEE} sats/byte.`
       break
     case "lthigh":
-      body += `going down and are now less than ${HIGH_FEE} sats/byte.`
+      body += `going down and are <strong>now less than ${HIGH_FEE} sats/byte.</strong>`
       break
     case "gthigh":
-      body += `greater than ${HIGH_FEE} sats/byte. If possible, try and avoid sending any non-urgent transactions until they go back down again.`
+      body += `<strong>greater than ${HIGH_FEE} sats/byte.</strong> If possible, try and avoid sending any non-urgent transactions until they go back down again.`
       break
     default:
       throw new Error(`Unrecognized type: ${type}`)
   }
 
-  body += `\n`
+  body += `<br /><br />`
 
-  body += `Fee estimate for 1 hour confirmation: ${hourFee} sats/byte\n`
-  body += `Stuck or dropped transaction fee level: ${minimumFee} sats/byte (don't send any transactions with fees less than this!)`
+  body += `<h4>Current Network Statistics:</h4>`
+  body += `<strong>Fee estimate for 1 hour confirmation:</strong> ${hourFee} sats/byte<br />`
+  body += `<strong>Stuck/dropped transaction fee level:</strong> ${minimumFee} sats/byte (don't send any transactions with fees less than this!)`
 
-  // TODO: add footer material, attribution, and update profile link
+  body += `<br /><br />`
+
+  body += `To update your preferences or unsubscribe visit this link: <br />http://localhost:3002/profile/${id}`
+
+  body += `<br /><br />`
+  body += `Data for this alert provided by https://mempool.space`
   return body
 }
 
-const sendEmail = async (type: AlertType): Promise<void> => {
-  const emails = (
-    await prisma.user.findMany({
-      where: {
-        types: {
-          hasSome: type,
-        },
+const sendEmail = async (
+  type: AlertType,
+  hourFee: number,
+  minimumFee: number
+): Promise<void> => {
+  const data = await prisma.user.findMany({
+    where: {
+      types: {
+        hasSome: type,
       },
-      select: {
-        email: true,
-      },
-    })
-  ).map((data) => data.email)
+    },
+    select: {
+      email: true,
+      id: true,
+    },
+  })
 
   const date = new Date().toISOString().split("T")[0]
 
-  const subject = getTypeSubject(type)
+  const subject = getEmailSubject(type)
 
-  const params = {
-    Source: "fee-alert@protonmail.com",
-    Destination: {
-      ToAddresses: emails,
-    },
-    Message: {
-      Body: {
-        Html: {
+  data.forEach(({ email, id }) => {
+    const params = {
+      Source: "fee-alert@protonmail.com",
+      Destination: {
+        ToAddresses: [email],
+      },
+      Message: {
+        Body: {
+          Html: {
+            Charset: "UTF-8",
+            Data: getEmailBody(type, hourFee, minimumFee, id),
+          },
+        },
+        Subject: {
           Charset: "UTF-8",
-          Data: "IT IS <strong>WORKING</strong>!",
+          Data: `[Bitcoin Fee Alert ${date}]: ${subject}`,
         },
       },
-      Subject: {
-        Charset: "UTF-8",
-        Data: `[Bitcoin Fee Alert ${date}]: ${subject}`,
-      },
-    },
-  }
+    }
+    const client = new AWS.SES(SESConfig)
+    client.sendEmail(params).promise()
+  })
 
-  const client = new AWS.SES(SESConfig)
-  await client.sendEmail(params).promise()
-  console.log(`Sent ${emails.length} ${type} email alerts`)
+  console.log(`Sending ${data.length} ${type} email alerts`)
 }
 
 const handler: NextApiHandler = async (req, res) => {
@@ -181,19 +193,17 @@ const handler: NextApiHandler = async (req, res) => {
 
   const feeAlertType = getFeeAlertType(hourFee, lastFee.hourFee)
 
-  if (!feeAlertType)
+  if (!feeAlertType) {
     console.log(
       `Fee change from ${lastFee.hourFee} to ${hourFee} did not trigger alert`
     )
-  else {
-    await sendEmail(feeAlertType)
+    await sendEmail("ltlow", hourFee, minimumFee)
+  } else {
+    // change in fee value triggers emails
+    await sendEmail(feeAlertType, hourFee, minimumFee)
   }
 
-  await sendEmail("ltlow")
-  return res.json(lastFee)
-
-  // based on value determined, get emails for all users that signed up for corresponding alert
-  // send email
+  return res.send("success")
 }
 
 export default handler

@@ -7,9 +7,7 @@ const IndexPage: React.FC = () => {
   return (
     <div>
       <Container>
-        <div className="flex justify-center">
-          <Logo />
-        </div>
+        <Logo />
         <h2 className="text-center font-medium text-xl">
           Know more. Pay less. Be a good bitcoin citizen.
         </h2>
