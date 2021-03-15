@@ -1,9 +1,9 @@
 name: 12-hour-cron
 on:
   schedule:
-    # - cron: "* */12 * * *"
-    # temp for testing, hit the endpoint every 5 minutes
-    - cron: "*/5 * * * *"
+    - cron: "* */12 * * *"
+  workflow_dispatch:
+
 jobs:
   cron:
     runs-on: ubuntu-latest

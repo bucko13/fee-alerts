@@ -113,27 +113,32 @@ const sendEmail = async (
 
   const subject = getEmailSubject(type)
 
+  // TODO: Parallelize these calls?
   data.forEach(({ email, id }) => {
-    const params = {
-      Source: "fee-alert@protonmail.com",
-      Destination: {
-        ToAddresses: [email],
-      },
-      Message: {
-        Body: {
-          Html: {
+    try {
+      const params = {
+        Source: "fee-alert@protonmail.com",
+        Destination: {
+          ToAddresses: [email],
+        },
+        Message: {
+          Body: {
+            Html: {
+              Charset: "UTF-8",
+              Data: getEmailBody(type, hourFee, minimumFee, id),
+            },
+          },
+          Subject: {
             Charset: "UTF-8",
-            Data: getEmailBody(type, hourFee, minimumFee, id),
+            Data: `[Bitcoin Fee Alert ${date}]: ${subject}`,
           },
         },
-        Subject: {
-          Charset: "UTF-8",
-          Data: `[Bitcoin Fee Alert ${date}]: ${subject}`,
-        },
-      },
+      }
+      const client = new AWS.SES(SESConfig)
+      client.sendEmail(params).promise()
+    } catch (e) {
+      console.error(`Problem sending email for user ${id}: ${e.message}`)
     }
-    const client = new AWS.SES(SESConfig)
-    client.sendEmail(params).promise()
   })
 
   console.log(`Sending ${data.length} ${type} email alerts`)
