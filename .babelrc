@@ -3,13 +3,5 @@
     "next/babel",
     ["@babel/preset-env", { "bugfixes": true, "loose": true }]
   ],
-  "plugins": [
-    ["@babel/transform-runtime"]
-    // [
-    //   "@babel/plugin-transform-react-jsx",
-    //   {
-    //     "runtime": "automatic"
-    //   }
-    // ]
-  ]
+  "plugins": [["@babel/transform-runtime"]]
 }
