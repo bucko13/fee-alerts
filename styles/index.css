@@ -16,6 +16,14 @@ a {
   text-decoration: underline;
 }
 
+h2 {
+  @apply text-xl;
+}
+
+h3 {
+  @apply text-lg;
+}
+
 /* Start purging... */
 @tailwind utilities;
 /* Stop purging. */

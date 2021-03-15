@@ -1,4 +1,5 @@
 import cn from "clsx"
+import { ButtonHTMLAttributes } from "react"
 
 function Button({
   onClick = console.log,
@@ -7,7 +8,6 @@ function Button({
   type = null,
   disabled = false,
 }) {
-  console.log("disabled?", disabled)
   return (
     <button
       type={type}

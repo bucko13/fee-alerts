@@ -7,9 +7,7 @@ const IndexPage: React.FC = () => {
   return (
     <div>
       <Container>
-        <div className="flex justify-center">
-          <Logo />
-        </div>
+        <Logo />
         <h2 className="text-center font-medium text-xl">
           Know more. Pay less. Be a good bitcoin citizen.
         </h2>
@@ -33,14 +31,7 @@ const IndexPage: React.FC = () => {
             <ExternalLink href="https://mempool.space">
               mempool.space
             </ExternalLink>
-            's low priority setting checked at 12-hour intervals.
-          </p>
-          <p className="my-2">
-            Each alert type is sent in its own email and evaluated separately
-            from the others. Signing up for 2x per day, "&gt; 10 sats/byte" and
-            "&lt; 50 sats/byte" and fees stay at 40 sats/byte for a full day,
-            you will receive 2 emails. Depending on demand and interest, these
-            settings could be made to be smarter in the future.
+            's low priority setting checked twice per day at 12-hour intervals.
           </p>
         </div>
         <p>Preferences can be updated at any time.</p>

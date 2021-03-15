@@ -1,8 +1,11 @@
-import Link from 'next/link';
-import Image from 'next/image'
+import Image from "next/image"
 
-export default function Logo() {
+export default function Logo(): React.ReactElement {
   return (
-    <Image src="/logo.png" width={300} height={75}/>
+    <div className="flex justify-center">
+      <a href="/">
+        <Image src="/logo.png" width={300} height={75} />
+      </a>
+    </div>
   )
 }

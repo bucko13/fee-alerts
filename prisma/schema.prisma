@@ -15,9 +15,16 @@ model User {
   types         AlertTypes[]
 }
 
+model Fee {
+  id            Int         @default(autoincrement()) @id
+  addedAt       DateTime    @default(now()) @map(name: "added_at")
+  hourFee       Int         
+  minimumFee    Int
+}
+
 enum AlertTypes {
-  lt10sats
-  gt10sats
-  lt50sats
-  gt50sats
+  ltlow
+  gtlow
+  lthigh
+  gthigh
 }
