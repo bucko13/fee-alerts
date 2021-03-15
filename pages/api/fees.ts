@@ -4,9 +4,9 @@ import prisma from "@/lib/prisma"
 import AWS from "aws-sdk"
 
 const SESConfig = {
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccesKey: process.env.AWS_SES_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION,
+  accessKeyId: process.env.AWS_SES_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SES_SECRET_ACCESS_KEY,
+  region: process.env.AWS_SES_REGION,
 }
 
 AWS.config.update(SESConfig)
@@ -83,7 +83,9 @@ const getEmailBody = (
 
   body += `<br /><br />`
 
-  body += `To update your preferences or unsubscribe visit this link: <br />http://localhost:3002/profile/${id}`
+  body += `To update your preferences or unsubscribe visit this link: <br />${
+    process.env.VERCEL_URL || process.env.API_ORIGIN
+  }/profile/${id}`
 
   body += `<br /><br />`
   body += `Data for this alert provided by https://mempool.space`
@@ -197,7 +199,9 @@ const handler: NextApiHandler = async (req, res) => {
     console.log(
       `Fee change from ${lastFee.hourFee} to ${hourFee} did not trigger alert`
     )
-    await sendEmail("ltlow", hourFee, minimumFee)
+
+    // TODO: Remove this test call
+    await sendEmail("gthigh", hourFee, minimumFee)
   } else {
     // change in fee value triggers emails
     await sendEmail(feeAlertType, hourFee, minimumFee)
