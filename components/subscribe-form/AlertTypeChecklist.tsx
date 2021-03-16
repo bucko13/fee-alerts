@@ -1,5 +1,3 @@
-import { AlertType } from "pages/api/fees"
-
 export const typesValues = [
   {
     value: "ltlow",

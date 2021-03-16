@@ -29,8 +29,8 @@ export const getFeeAlertType = (
 }
 
 const getEmailSubject = (type: AlertType): string => {
-  const LOW_FEE = process.env.LOW_FEE
-  const HIGH_FEE = process.env.HIGH_FEE
+  const LOW_FEE = process.env.LOW_FEE || 10
+  const HIGH_FEE = process.env.HIGH_FEE || 50
 
   switch (type) {
     case "ltlow":
@@ -50,7 +50,7 @@ const getProfileUrl = (id: string): string => {
   const VERCEL_URL = process.env.VERCEL_URL
   const API_ORIGIN = process.env.API_ORIGIN
 
-  let base
+  let base: string
   if (API_ORIGIN && API_ORIGIN.includes("http")) {
     base = API_ORIGIN
   } else {
@@ -100,10 +100,11 @@ const getEmailBody = (
 
   const profileUrl = getProfileUrl(id)
 
-  body += `To update your preferences or unsubscribe visit this link: <br />${profileUrl}`
+  body += `To update your preferences or unsubscribe visit this link: <br />
+<a href="${profileUrl}">${profileUrl}</a>`
 
   body += `<br /><br />`
-  body += `Data for this alert provided by https://mempool.space`
+  body += `Data for this alert provided by <a href="https://mempool.space">https://mempool.space</a>`
   return body
 }
 
@@ -132,7 +133,7 @@ const sendEmail = async (
   data.forEach(async ({ email, id }) => {
     try {
       const params = {
-        Source: "fee-alert@protonmail.com",
+        Source: "notifications@txfees.watch",
         Destination: {
           ToAddresses: [email],
         },
