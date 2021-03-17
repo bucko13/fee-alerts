@@ -1,11 +1,11 @@
-import { getFeeAlertType, AlertType } from "../pages/api/fees"
+import { getFeeAlertType } from "../pages/api/fees"
 import { getFeeFixtures } from "./fixtures"
 
 describe("fees", () => {
   describe("getFeeAlertType", () => {
     const OLD_ENV = process.env
-    const low = 12
-    const high = 50
+    const low = 8
+    const high = 60
     beforeEach(() => {
       jest.resetModules()
       process.env = { ...OLD_ENV }

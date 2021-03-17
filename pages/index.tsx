@@ -33,7 +33,7 @@ const IndexPage: React.FC = () => {
             </ExternalLink>
             's low priority setting checked 4 times per day at 6-hour intervals.
             If the state of the mempool has changed since the last check then
-            emails will be triggered accordingly
+            emails will be triggered accordingly.
           </p>
         </div>
         <p>Preferences can be updated at any time.</p>

@@ -2,7 +2,6 @@ import { NextApiHandler } from "next"
 import axios from "axios"
 import prisma from "@/lib/prisma"
 import AWS from "aws-sdk"
-import path from "path"
 
 const SESConfig = {
   accessKeyId: process.env.AWS_SES_ACCESS_KEY_ID,
@@ -151,7 +150,8 @@ const sendEmail = async (
         },
       }
       const client = new AWS.SES(SESConfig)
-      await client.sendEmail(params).promise()
+      const resp = await client.sendEmail(params).promise()
+      console.log("email response: ", resp)
     } catch (e) {
       console.error(`Problem sending email for user ${id}: ${e.message}`)
     }
