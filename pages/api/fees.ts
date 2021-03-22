@@ -151,6 +151,12 @@ const sendEmail = async (
       }
       const client = new AWS.SES(SESConfig)
       const resp = await client.sendEmail(params).promise()
+      // if missing response, then try again
+      // not sure why this doesn't have a response or send properly sometimes
+      if (!resp) {
+        console.log("Email was sent so trying again...")
+        sendEmail(type, hourFee, minimumFee)
+      }
       console.log("email response: ", resp)
     } catch (e) {
       console.error(`Problem sending email for user ${id}: ${e.message}`)
@@ -216,6 +222,7 @@ const handler: NextApiHandler = async (req, res) => {
 
   const feeAlertType = getFeeAlertType(hourFee, lastFee.hourFee)
 
+  console.log("Determining which emails to send...")
   if (!feeAlertType) {
     console.log(
       `Fee change from ${lastFee.hourFee} to ${hourFee} did not trigger alert`

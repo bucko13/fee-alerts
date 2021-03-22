@@ -1,19 +1,19 @@
 export const typesValues = [
   {
     value: "ltlow",
-    label: `Less than ${process.env.LOW_FEE || 10} sats/byte`,
+    label: `Less than ${process.env.NEXT_PUBLIC_LOW_FEE || 10} sats/byte`,
   },
   {
     value: "gtlow",
-    label: `Greater than ${process.env.LOW_FEE || 10} sats/byte`,
+    label: `Greater than ${process.env.NEXT_PUBLIC_LOW_FEE || 10} sats/byte`,
   },
   {
     value: "lthigh",
-    label: `Less than ${process.env.HIGH_FEE || 50} sats/byte`,
+    label: `Less than ${process.env.NEXT_PUBLIC_HIGH_FEE || 50} sats/byte`,
   },
   {
     value: "gthigh",
-    label: `Greater than ${process.env.HIGH_FEE || 50} sats/byte`,
+    label: `Greater than ${process.env.NEXT_PUBLIC_HIGH_FEE || 50} sats/byte`,
   },
 ]
 
