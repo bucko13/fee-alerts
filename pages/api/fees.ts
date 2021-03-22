@@ -128,7 +128,8 @@ const sendCustomEmail = async (
 
   const subject = getEmailSubject(type)
 
-  // TODO: Parallelize these calls?
+  // below doesn't work consistently because it is non-blocking
+  // async which sometimes doesn't complete in time for serverless env
   data.forEach(async ({ email, id }) => {
     try {
       const params = {
@@ -187,7 +188,7 @@ const sendEmail = async (
       },
       ReplacementTemplateData: JSON.stringify({
         HIGH_FEE: process.env.HIGH_FEE,
-        LOW_FEE: process.env.HIGH_FEE,
+        LOW_FEE: process.env.LOW_FEE,
         date,
         hourFee,
         minimumFee,
@@ -212,15 +213,13 @@ const sendEmail = async (
         profileUrl: "https://txfees.watch",
       }),
     }
-
+    console.log(`Sending ${data.length} ${type} email alerts`)
     const client = new AWS.SES(SESConfig)
     const resp = await client.sendBulkTemplatedEmail(params).promise()
     console.log("email response: ", resp)
   } catch (e) {
     console.error(`Problem sending emails: ${e.message}`)
   }
-
-  console.log(`Sending ${data.length} ${type} email alerts`)
 }
 
 const handler: NextApiHandler = async (req, res) => {
@@ -279,14 +278,10 @@ const handler: NextApiHandler = async (req, res) => {
 
   const feeAlertType = getFeeAlertType(hourFee, lastFee.hourFee)
 
-  console.log("Determining which emails to send...")
   if (!feeAlertType) {
     console.log(
       `Fee change from ${lastFee.hourFee} to ${hourFee} did not trigger alert`
     )
-
-    // TODO: Remove this test call
-    await sendEmail("gthigh", hourFee, minimumFee)
   } else {
     // change in fee value triggers emails
     await sendEmail(feeAlertType, hourFee, minimumFee)
