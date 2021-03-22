@@ -107,7 +107,7 @@ const getEmailBody = (
   return body
 }
 
-const sendEmail = async (
+const sendCustomEmail = async (
   type: AlertType,
   hourFee: number,
   minimumFee: number
@@ -151,17 +151,74 @@ const sendEmail = async (
       }
       const client = new AWS.SES(SESConfig)
       const resp = await client.sendEmail(params).promise()
-      // if missing response, then try again
-      // not sure why this doesn't have a response or send properly sometimes
-      if (!resp) {
-        console.log("Email was sent so trying again...")
-        sendEmail(type, hourFee, minimumFee)
-      }
       console.log("email response: ", resp)
     } catch (e) {
       console.error(`Problem sending email for user ${id}: ${e.message}`)
     }
   })
+
+  console.log(`Sending ${data.length} ${type} email alerts`)
+}
+
+const sendEmail = async (
+  type: AlertType,
+  hourFee: number,
+  minimumFee: number
+): Promise<void> => {
+  const data = await prisma.user.findMany({
+    where: {
+      types: {
+        hasSome: type,
+      },
+    },
+    select: {
+      email: true,
+      id: true,
+    },
+  })
+
+  const date = new Date().toISOString().split("T")[0]
+  const destinations = []
+
+  for (const { email, id } of data) {
+    const destination = {
+      Destination: {
+        ToAddresses: [email],
+      },
+      ReplacementTemplateData: JSON.stringify({
+        HIGH_FEE: process.env.HIGH_FEE,
+        LOW_FEE: process.env.HIGH_FEE,
+        date,
+        hourFee,
+        minimumFee,
+        profileUrl: getProfileUrl(id),
+      }),
+    }
+
+    destinations.push(destination)
+  }
+
+  try {
+    const params = {
+      Source: "notifications@txfees.watch",
+      Template: type,
+      Destinations: destinations,
+      DefaultTemplateData: JSON.stringify({
+        HIGH_FEE: process.env.HIGH_FEE,
+        LOW_FEE: process.env.HIGH_FEE,
+        date,
+        hourFee,
+        minimumFee,
+        profileUrl: "https://txfees.watch",
+      }),
+    }
+
+    const client = new AWS.SES(SESConfig)
+    const resp = await client.sendBulkTemplatedEmail(params).promise()
+    console.log("email response: ", resp)
+  } catch (e) {
+    console.error(`Problem sending emails: ${e.message}`)
+  }
 
   console.log(`Sending ${data.length} ${type} email alerts`)
 }

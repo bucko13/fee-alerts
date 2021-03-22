@@ -1,0 +1,8 @@
+{
+  "Template": {
+    "TemplateName": "gthigh",
+    "SubjectPart": "[Bitcoin Fee Alert {{date}}]: Fees greater than {{HIGH_FEE}} sats/byte",
+    "HtmlPart": "<h3>This is a bitoin fee alert.</h3><br />Fees on the bitcoin network are currently <strong>greater than {{HIGH_FEE}} sats/byte.</strong> If possible, try and avoid sending any non-urgent transactions until they go back down again.<br /><br /><h4>Current Network Statistics:</h4><strong>Fee estimate for 1 hour confirmation:</strong> {{hourFee}} sats/byte.<br /><strong>Stuck/dropped transaction fee level:</strong> {{minimumFee}} sats/byte (don't send any transactions with fees less than this!)<br /><br />To update your preferences or unsubscribe visit this link: <br /><a href=\"{{profileUrl}}\">{{profileUrl}}</a>",
+    "TextPart": "This is a bitoin fee alert.\r\nFees on the bitcoin network are currently greater than {{HIGH_FEE}} sats/byte. If possible, try and avoid sending any non-urgent transactions until they go back down again.\r\n \r\nCurrent Network Statistics: \r\nFee estimate for 1 hour confirmation: {{hourFee}} sats/byte.\r\nStuck/dropped transaction fee level: {{minimumFee}} sats/byte (don't send any transactions with fees less than this!)\r\n\r\nTo update your preferences or unsubscribe visit this link: \r\n{{profileUrl}}"
+  }
+}
