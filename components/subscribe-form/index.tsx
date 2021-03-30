@@ -67,10 +67,14 @@ const SubscribeForm: React.FC = () => {
   return (
     <div className="p-10 shadow-xl rounded-md">
       {userId ? (
-        <h3>
-          Your submission was successful! Update preferences here{" "}
-          <a href={`/profile/${userId}`}>here</a>.
-        </h3>
+        <>
+          <h3>Your submission was successful!</h3>
+          <p>
+            Check your inbox for a confirmation email, which includes a unique
+            profile link to update your preferences. Make sure to check your
+            spam if none is received within 5 minutes.
+          </p>
+        </>
       ) : (
         <form onSubmit={submitHandler} onChange={() => setErrors([])}>
           <div className="mb-10">

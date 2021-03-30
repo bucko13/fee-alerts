@@ -1,5 +1,16 @@
 import prisma from "../../../lib/prisma"
 import { NextApiHandler } from "next"
+import axios from "axios"
+import AWS from "aws-sdk"
+import { getProfileUrl } from "@/lib/utils"
+
+const SESConfig = {
+  accessKeyId: process.env.AWS_SES_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SES_SECRET_ACCESS_KEY,
+  region: process.env.AWS_SES_REGION,
+}
+
+AWS.config.update(SESConfig)
 
 // POST /api/post
 
@@ -25,7 +36,28 @@ const postHandler = async (req, res) => {
           types,
         },
       })
-      res.json(result)
+
+      // query mempool.space/api/v1/fees/recommended
+      const { data } = await axios.get(
+        "https://mempool.space/api/v1/fees/recommended"
+      )
+      const { hourFee, minimumFee } = data
+
+      const params = {
+        Source: "notifications@txfees.watch",
+        Template: "confirmation",
+        Destination: { ToAddresses: [email] },
+        TemplateData: JSON.stringify({
+          hourFee,
+          minimumFee,
+          profileUrl: getProfileUrl(result.id),
+        }),
+      }
+      console.log(`Sending confirmation email for new subscription.`)
+      const client = new AWS.SES(SESConfig)
+      const emailResp = await client.sendTemplatedEmail(params).promise()
+      console.log(`Confirmation Email: `, emailResp)
+      return res.json({ ...result, minimumFee, hourFee })
     }
   } catch (e) {
     console.error(`Problem creating new user: ${e.message}`)

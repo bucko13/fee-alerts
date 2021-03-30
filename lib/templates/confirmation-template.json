@@ -1,0 +1,8 @@
+{
+  "Template": {
+    "TemplateName": "confirmation",
+    "SubjectPart": "Bitcoin Fee Alert Subscription Confirmation",
+    "HtmlPart": "<p>This email is to confirm your subscription to receive fee alerts for changing conditions in the bitcoin mempool.</p><p>To update your preferences or unsubscribe visit this link: <br /><a href=\"{{profileUrl}}\">{{profileUrl}}</a></p><h4>Current Network Statistics:</h4><strong>Fee estimate for 1 hour confirmation:</strong> {{hourFee}} sats/byte.<br /><strong>Stuck/dropped transaction fee level:</strong> {{minimumFee}} sats/byte (don't send any transactions with fees less than this!)",
+    "TextPart": "This email is to confirm your subscription to receive fee alerts for changing conditions in the bitcoin mempool.\r\nTo update your preferences or unsubscribe visit this url:\r\n{{profileUrl}}\r\n\r\nCurrent Network Statistics:\r\nFee estimate for 1 hour confirmation: {{hourFee}} sats/byte.\r\nStuck/dropped transaction fee level: {{minimumFee}} sats/byte (don't send any transactions with fees less than this!)"
+  }
+}

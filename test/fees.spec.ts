@@ -1,4 +1,4 @@
-import { getFeeAlertType } from "../pages/api/fees"
+import { getFeeAlertType } from "@/lib/utils"
 import { getFeeFixtures } from "./fixtures"
 
 describe("fees", () => {

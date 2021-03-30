@@ -1,4 +1,4 @@
-import { AlertType } from "pages/api/fees"
+import { AlertType } from "@/lib/utils"
 
 export const getFeeFixtures = (
   low: number,

@@ -5,10 +5,10 @@ import AlertTypeChecklist, {
   typesChecklist,
 } from "@/components/subscribe-form/AlertTypeChecklist"
 import prisma from "@/lib/prisma"
+import { AlertType } from "@/lib/utils"
 import axios from "axios"
 import { GetServerSideProps } from "next"
 import { useRouter } from "next/router"
-import { AlertType } from "pages/api/fees"
 import { useEffect, useState } from "react"
 
 type ProfileProps = {
