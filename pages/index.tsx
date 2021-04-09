@@ -44,7 +44,12 @@ const IndexPage: React.FC = () => {
           <p className="mt-2">
             You can add custom automation to respond to different alerts by
             plugging in to{" "}
-            <ExternalLink href="https://ifttt.com">IFTT</ExternalLink>. Setup{" "}
+            <ExternalLink href="https://ifttt.com">IFTTT</ExternalLink> and
+            their{" "}
+            <ExternalLink href="https://ifttt.com/email">
+              e-mail triggers
+            </ExternalLink>
+            . Setup{" "}
             <ExternalLink href="https://ifttt.com/slack">
               Slack notifications
             </ExternalLink>
