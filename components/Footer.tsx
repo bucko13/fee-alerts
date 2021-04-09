@@ -7,12 +7,9 @@ type Props = {
 const Container: React.FC<Props> = ({ className = "", children }) => {
   return (
     <div
-      className={
-        "flex items-center justify-center bg-gray-50 pt-12 px-4 sm:px-6 lg:px-8 font-mono" +
-        className
-      }
+      className={"flex items-center justify-center font-mono p-6" + className}
     >
-      <div className="space-y-8 p-10 max-w-3xl">{children}</div>
+      <div className="space-y-8">{children}</div>
     </div>
   )
 }

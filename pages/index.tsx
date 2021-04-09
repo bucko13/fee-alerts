@@ -32,11 +32,33 @@ const IndexPage: React.FC = () => {
               mempool.space
             </ExternalLink>
             's low priority setting checked at regular intervals throughout the
-            day. If the state of the mempool has changed since the last check
-            then emails will be triggered accordingly.
+            day. If the state of the mempool has changed since the last check,
+            then emails will be triggered accordingly. Only the change since the
+            last check is logged and used to determine whether an alert is
+            triggered.
           </p>
         </div>
         <p>Preferences can be updated at any time.</p>
+        <div>
+          <h3 className="font-semibold">Automation</h3>
+          <p className="mt-2">
+            You can add custom automation to respond to different alerts by
+            plugging in to{" "}
+            <ExternalLink href="https://ifttt.com">IFTT</ExternalLink>. Setup{" "}
+            <ExternalLink href="https://ifttt.com/slack">
+              Slack notifications
+            </ExternalLink>
+            , create{" "}
+            <ExternalLink href="https://ifttt.com/search/query/to%20do?tab=services">
+              task list reminders
+            </ExternalLink>
+            , even flash your{" "}
+            <ExternalLink href="https://ifttt.com/wemo_lighting">
+              smart light
+            </ExternalLink>{" "}
+            on and off in response to fee changes.
+          </p>
+        </div>
         <div>
           <h3 className="font-semibold">Note about privacy:</h3>
           <p className="mt-2">
