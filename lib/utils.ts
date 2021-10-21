@@ -27,3 +27,6 @@ export const getProfileUrl = (id: string): string => {
 
   return new URL(`profile/${id}`, base).href
 }
+
+export const delay = (time: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, time))

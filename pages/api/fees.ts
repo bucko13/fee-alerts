@@ -2,7 +2,7 @@ import { NextApiHandler } from "next"
 import axios from "axios"
 import prisma from "@/lib/prisma"
 import AWS from "aws-sdk"
-import { AlertType, getProfileUrl, getFeeAlertType } from "@/lib/utils"
+import { AlertType, getProfileUrl, getFeeAlertType, delay } from "@/lib/utils"
 
 const SESConfig = {
   accessKeyId: process.env.AWS_SES_ACCESS_KEY_ID,
@@ -50,26 +50,32 @@ const sendEmail = async (
     destinations.push(destination)
   }
 
-  try {
-    const params = {
-      Source: "notifications@txfees.watch",
-      Template: type,
-      Destinations: destinations,
-      DefaultTemplateData: JSON.stringify({
-        HIGH_FEE: process.env.HIGH_FEE,
-        LOW_FEE: process.env.HIGH_FEE,
-        date,
-        hourFee,
-        minimumFee,
-        profileUrl: "https://txfees.watch",
-      }),
+  while (destinations.length) {
+    // max send per hour
+    const destinationList = destinations.splice(0, 49)
+    try {
+      const params = {
+        Source: "notifications@txfees.watch",
+        Template: type,
+        Destinations: destinationList,
+        DefaultTemplateData: JSON.stringify({
+          HIGH_FEE: process.env.HIGH_FEE,
+          LOW_FEE: process.env.HIGH_FEE,
+          date,
+          hourFee,
+          minimumFee,
+          profileUrl: "https://txfees.watch",
+        }),
+      }
+      console.log(`Sending ${destinationList.length} ${type} email alerts`)
+      const client = new AWS.SES(SESConfig)
+      const resp = await client.sendBulkTemplatedEmail(params).promise()
+      console.log("email response: ", resp)
+      // delay before next send
+      await delay(250)
+    } catch (e) {
+      console.error(`Problem sending emails: ${e.message}`)
     }
-    console.log(`Sending ${data.length} ${type} email alerts`)
-    const client = new AWS.SES(SESConfig)
-    const resp = await client.sendBulkTemplatedEmail(params).promise()
-    console.log("email response: ", resp)
-  } catch (e) {
-    console.error(`Problem sending emails: ${e.message}`)
   }
 }
 
